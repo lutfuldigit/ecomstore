@@ -189,6 +189,7 @@
   if (modal) {
     modalClose && modalClose.addEventListener('click', closeModal);
     modalExplore && modalExplore.addEventListener('click', closeModal);
+    $('#modal-cta') && $('#modal-cta').addEventListener('click', closeModal);
     $('.modal-backdrop') &&
       $('.modal-backdrop').addEventListener('click', closeModal);
 
@@ -199,7 +200,7 @@
       }
     });
 
-    /* Show when the user scrolls to the "Every Device" section, with a cooldown */
+    /* Popup: 20s on the site, OR on reaching the "Everything You Need" section — whichever first. Cooldown 60s. */
     const MODAL_COOLDOWN = 60000;
     let lastModalShownAt = 0;
 
@@ -212,10 +213,12 @@
       }
     };
 
+    setTimeout(maybeShowModal, 20000);
+
     if (window.ScrollTrigger) {
       gsap.registerPlugin(ScrollTrigger);
       ScrollTrigger.create({
-        trigger: '#platform',
+        trigger: '#features',
         start: 'top 80%',
         onEnter: maybeShowModal,
         onEnterBack: maybeShowModal,
@@ -352,55 +355,6 @@
         });
       }
     }
-
-    /* ---------- Phone scroll experience ---------- */
-    const phoneScroll = $('#phone-scroll');
-    if (!phoneScroll) {
-      return;
-    }
-
-    const phoneElem = phoneScroll.querySelector('.phone-scroll-phone');
-
-    if (phoneElem && !isMobile() && !prefersReducedMotion) {
-      const steps = phoneScroll.querySelectorAll('.phone-scroll-step');
-
-      gsap.to(phoneElem, {
-        scrollTrigger: {
-          trigger: phoneScroll,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: true,
-          onUpdate: (self) => {
-            const progress = self.progress;
-            /* subtle rotation + vertical translation + scale */
-            gsap.set(phoneElem, {
-              y: progress * 120,
-              rotation: (progress - 0.5) * 6,
-              scale: 1 + progress * 0.03,
-            });
-            /* Show step content based on progress */
-            const stepIndex = Math.min(
-              Math.floor(progress * steps.length),
-              steps.length - 1
-            );
-            steps.forEach((step, i) => {
-              if (stepIndex === i) step.classList.remove('hidden');
-              else step.classList.add('hidden');
-            });
-          },
-        },
-      });
-    } else if (phoneElem) {
-      /* Mobile — static fallback, show all steps properly */
-      gsap.set(phoneScroll.querySelector('.phone-scroll-visual'), {
-        position: 'static',
-        marginTop: '2rem',
-      });
-      const steps = phoneScroll.querySelectorAll('.phone-scroll-step');
-      steps.forEach((step, i) => {
-        if (i > 0) step.classList.remove('hidden');
-      });
-    }
   }
 
   /* ---------- Cleanup on resize for pinned sections ---------- */
@@ -465,5 +419,98 @@
       bubbleEl.classList.add('show');
       typeChar(0);
     }, 2200);
+  })();
+
+  /* ---------- Device image lightbox (Every Device section) ---------- */
+  (function initDeviceLightbox() {
+    const lightbox = $('#device-lightbox');
+    const lightboxImage = lightbox ? lightbox.querySelector('.device-lightbox-image') : null;
+    const lightboxClose = lightbox ? lightbox.querySelector('.device-lightbox-close') : null;
+    const lightboxBackdrop = lightbox ? lightbox.querySelector('.device-lightbox-backdrop') : null;
+
+    if (!lightbox || !lightboxImage) return;
+
+    $$('.device-item').forEach((item) => {
+      item.addEventListener('click', () => {
+        const src = item.getAttribute('data-img');
+        if (!src) return;
+        lightboxImage.src = src;
+        lightbox.classList.add('lightbox-open');
+        lightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    const closeLightbox = () => {
+      lightbox.classList.remove('lightbox-open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    };
+
+    lightboxClose && lightboxClose.addEventListener('click', closeLightbox);
+    lightboxBackdrop && lightboxBackdrop.addEventListener('click', closeLightbox);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox.classList.contains('lightbox-open')) {
+        closeLightbox();
+      }
+    });
+  })();
+
+  /* ---------- Video lightbox (mobile demo) ---------- */
+  (function initVideoLightbox() {
+    const lightbox = $('#video-lightbox');
+    const lightboxVideo = lightbox ? lightbox.querySelector('.video-lightbox-video') : null;
+    const lightboxClose = lightbox ? lightbox.querySelector('.video-lightbox-close') : null;
+    const lightboxBackdrop = lightbox ? lightbox.querySelector('.video-lightbox-backdrop') : null;
+    const trigger = $('#video-expand-trigger');
+
+    /* Block download attempts: context menu and keyboard shortcuts */
+    const blockDownload = (e) => e.preventDefault();
+    lightbox && lightbox.addEventListener('contextmenu', blockDownload);
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && ['s', 'u'].includes(e.key.toLowerCase())) {
+        if (lightbox && lightbox.classList.contains('lightbox-open')) {
+          e.preventDefault();
+        }
+      }
+    });
+
+    const openVideo = (currentTime) => {
+      if (!lightbox || !lightboxVideo) return;
+      lightboxVideo.currentTime = currentTime || 0;
+      const playPromise = lightboxVideo.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(() => {});
+      }
+      lightbox.classList.add('lightbox-open');
+      lightbox.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    };
+
+    const closeVideo = () => {
+      if (!lightbox) return;
+      lightboxVideo && lightboxVideo.pause();
+      lightbox.classList.remove('lightbox-open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    };
+
+    const inlineVideo = document.querySelector('#video-expand-trigger video');
+
+    if (trigger && lightbox) {
+      trigger.addEventListener('click', () => {
+        openVideo(inlineVideo ? inlineVideo.currentTime : 0);
+      });
+    }
+
+    lightboxClose && lightboxClose.addEventListener('click', closeVideo);
+    lightboxBackdrop && lightboxBackdrop.addEventListener('click', closeVideo);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox && lightbox.classList.contains('lightbox-open')) {
+        closeVideo();
+      }
+    });
   })();
 })();

@@ -261,54 +261,6 @@ button:focus-visible {
   }
 }
 
-/* ---------- Media placeholders ---------- */
-.media-frame {
-  position: relative;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid rgba(180, 190, 210, 0.6);
-  background: linear-gradient(160deg, #f4f7ff 0%, #edf1fb 100%);
-  box-shadow: 0 24px 60px rgba(21, 33, 90, 0.22);
-  transition: transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
-}
-.media-frame:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 32px 80px rgba(21, 33, 90, 0.3);
-}
-
-.media-placeholder {
-  position: relative;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(0, 0, 255, 0.04) 0%, transparent 50%),
-    repeating-linear-gradient(45deg, rgba(0, 0, 255, 0.03) 0px, rgba(0, 0, 255, 0.03) 2px, transparent 2px, transparent 4px),
-    linear-gradient(160deg, #eef3ff 0%, #e8edf8 100%);
-  border: none;
-  min-height: 200px;
-}
-.media-placeholder::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border: 1px dashed rgba(0, 0, 255, 0.18);
-  border-radius: inherit;
-  margin: 10px;
-  pointer-events: none;
-}
-.media-placeholder::after {
-  content: attr(data-label);
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  font-size: 9px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(0, 0, 255, 0.35);
-  font-weight: 600;
-}
-
 /* ---------- Phone mockups ---------- */
 .phone-mockup {
   width: 245px;
@@ -352,8 +304,10 @@ button:focus-visible {
   background: #eef3ff;
   position: relative;
 }
-.phone-screen .media-placeholder {
-  border-radius: 0;
+.phone-screen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* Small phone (devices section) */
@@ -504,33 +458,6 @@ button:focus-visible {
   background: linear-gradient(180deg, #ffffff 0%, #dfe5f2 100%);
   border-radius: 4px 4px 10px 10px;
   box-shadow: inset 0 1px 2px rgba(13, 20, 48, 0.15);
-}
-
-/* media-placeholder-sm for devices */
-.media-placeholder-sm {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(0, 0, 255, 0.05) 0%, transparent 50%),
-    linear-gradient(160deg, #eef3ff 0%, #e8edf8 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: none;
-}
-.media-placeholder-sm::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border: 1px dashed rgba(0, 0, 255, 0.15);
-  border-radius: inherit;
-  margin: 6px;
-  pointer-events: none;
 }
 
 /* ---------- Device showcase ---------- */
@@ -770,28 +697,6 @@ button:focus-visible {
   position: relative;
   z-index: 1;
 }
-.management-banner .media-frame {
-  border-color: rgba(255, 255, 255, 0.28);
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 24px 60px rgba(6, 10, 40, 0.28);
-}
-.management-banner .media-placeholder {
-  background:
-    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.14) 0%, transparent 50%),
-    linear-gradient(160deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
-}
-.management-banner .media-placeholder::before {
-  border-color: rgba(255, 255, 255, 0.3);
-}
-.management-banner .media-placeholder::after {
-  color: rgba(255, 255, 255, 0.75);
-}
-.management-banner .media-placeholder svg {
-  color: #fff;
-}
-.management-banner .media-placeholder span {
-  color: rgba(255, 255, 255, 0.8);
-}
 
 /* ---------- Pricing card ---------- */
 .pricing-card {
@@ -821,7 +726,7 @@ button:focus-visible {
   text-align: center;
   position: relative;
 }
-.pricing-value-label {
+.pricing-regular-label {
   font-size: 11px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
@@ -868,7 +773,7 @@ button:focus-visible {
   border-radius: 999px;
   white-space: nowrap;
 }
-.pricing-launch-label {
+.pricing-current-label {
   font-size: 11px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
@@ -1044,6 +949,132 @@ button:focus-visible {
 .modal-cta {
   width: 100%;
   text-align: center;
+}
+
+/* ---------- Device image lightbox ---------- */
+.device-item {
+  cursor: pointer;
+}
+.device-item img {
+  pointer-events: none;
+  user-select: none;
+}
+.device-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out), visibility 0.3s;
+}
+.device-lightbox.lightbox-open {
+  visibility: visible;
+  opacity: 1;
+}
+.device-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 12, 25, 0.92);
+  backdrop-filter: blur(10px);
+}
+.device-lightbox-image {
+  position: relative;
+  max-width: 92vw;
+  max-height: 88vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  transform: scale(0.96);
+  transition: transform 0.3s var(--ease-out);
+}
+.device-lightbox.lightbox-open .device-lightbox-image {
+  transform: scale(1);
+}
+.device-lightbox-close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.3s var(--ease-out);
+  z-index: 2;
+}
+.device-lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ---------- Video lightbox (mobile demo) ---------- */
+.video-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 115;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out), visibility 0.3s;
+}
+.video-lightbox.lightbox-open {
+  visibility: visible;
+  opacity: 1;
+}
+.video-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 12, 25, 0.95);
+  backdrop-filter: blur(10px);
+}
+.video-lightbox-video {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  max-height: 88vh;
+  aspect-ratio: 9 / 16;
+  object-fit: contain;
+  background: #000;
+  border-radius: 14px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
+  transform: scale(0.96);
+  transition: transform 0.3s var(--ease-out);
+}
+.video-lightbox.lightbox-open .video-lightbox-video {
+  transform: scale(1);
+}
+.video-lightbox-close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.3s var(--ease-out);
+  z-index: 2;
+}
+.video-lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* ---------- PWA platform cards ---------- */
@@ -1261,86 +1292,7 @@ button:focus-visible {
   flex-shrink: 0;
 }
 
-/* ---------- Bonus / Free Business Growth Gift ---------- */
-.bonus-gift-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.5rem;
-  border-radius: 999px;
-  border: 1px solid rgba(0, 0, 255, 0.35);
-  background: linear-gradient(160deg, rgba(0, 0, 255, 0.14), rgba(0, 0, 255, 0.04));
-  color: var(--gold-light);
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.bonus-stack {
-  max-width: 720px;
-  margin: 0 auto;
-}
-.bonus-layer {
-  display: grid;
-  grid-template-columns: 56px 1fr;
-  gap: 1.1rem;
-  align-items: start;
-  padding: 1.5rem 0.25rem;
-  border-bottom: 1px dashed rgba(180, 190, 210, 0.7);
-}
-.bonus-layer:last-child {
-  border-bottom: none;
-}
-.bonus-layer-plus {
-  font-family: 'DM Serif Display', Georgia, serif;
-  font-size: 2.1rem;
-  line-height: 1.2;
-  color: var(--gold);
-  font-weight: 400;
-  text-align: center;
-  user-select: none;
-}
-.bonus-layer-title {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 0.35rem;
-}
-.bonus-layer-tag {
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: #152033;
-}
-.bonus-layer-desc {
-  color: rgba(98, 109, 135, 1);
-  font-size: 1rem;
-  line-height: 1.6;
-}
-.bonus-platforms {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.85rem;
-}
-.bonus-platform {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.9rem;
-  border-radius: 999px;
-  border: 1px solid rgba(180, 190, 210, 0.6);
-  background: rgba(255, 255, 255, 0.7);
-  color: rgba(30, 37, 60, 0.92);
-  font-size: 0.78rem;
-  font-weight: 500;
-}
-.bonus-platform svg {
-  width: 15px;
-  height: 15px;
-  color: var(--gold);
-}
+/* ---------- Bonus / Guarantee note ---------- */
 .bonus-note {
   max-width: 720px;
   margin: 2.5rem auto 0;
@@ -1508,13 +1460,6 @@ button:focus-visible {
   }
   .pricing-launch .pricing-amount {
     font-size: 3rem;
-  }
-  .bonus-layer {
-    grid-template-columns: 40px 1fr;
-    gap: 0.75rem;
-  }
-  .bonus-layer-plus {
-    font-size: 1.7rem;
   }
   .bonus-note {
     padding: 1.75rem 1.25rem;
