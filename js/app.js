@@ -356,7 +356,6 @@
     /* ---------- Phone scroll experience ---------- */
     const phoneScroll = $('#phone-scroll');
     if (!phoneScroll) {
-      setupDeviceShowcase();
       return;
     }
 
@@ -401,51 +400,6 @@
       steps.forEach((step, i) => {
         if (i > 0) step.classList.remove('hidden');
       });
-    }
-
-    setupDeviceShowcase();
-  }
-
-  /* ---------- Device showcase animation ---------- */
-  function setupDeviceShowcase() {
-    const showcase = $('.devices-showcase');
-    if (!showcase) return;
-
-    const devices = showcase.querySelectorAll('.device-item');
-
-    if (!isMobile() && !prefersReducedMotion) {
-      /* Staggered entrance for the device showcase */
-      gsap.fromTo(
-        devices,
-        { opacity: 0, y: 60, scale: 0.94 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 1.1,
-          ease: 'power3.out',
-          stagger: 0.14,
-          scrollTrigger: {
-            trigger: showcase,
-            start: 'top 78%',
-            once: true,
-          },
-        }
-      );
-
-      /* Subtle continuous float on the showcase */
-      devices.forEach((device, i) => {
-        gsap.to(device, {
-          y: -8,
-          duration: 3.5 + i * 0.4,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-          delay: i * 0.3,
-        });
-      });
-    } else {
-      gsap.set(devices, { clearProps: 'all' });
     }
   }
 

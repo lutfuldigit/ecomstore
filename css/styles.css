@@ -212,25 +212,52 @@ button:focus-visible {
 }
 
 @media (max-width: 639px) {
-  #hero-visual {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.8rem;
+  #hero-visual .phone-mockup {
+    width: 180px;
+    height: 375px;
   }
-  .floating-ui-card {
-    position: static;
-    animation: none;
+  #hero-visual .phone-mockup img {
     width: 100%;
-    max-width: min(340px, 100%);
+    height: 100%;
+    object-fit: cover;
   }
-  .floating-ui-card > div {
-    width: 100%;
-  }
-  #float-card-1, #float-card-2, #float-card-3 {
-    top: auto;
-    left: auto;
+  #float-card-1 {
+    top: 14px;
+    left: 0;
     right: auto;
     bottom: auto;
+  }
+  #float-card-2 {
+    right: 0;
+    bottom: 20px;
+    left: auto;
+    top: auto;
+  }
+  #float-card-3 {
+    right: 0;
+    top: 50%;
+    left: auto;
+    bottom: auto;
+  }
+  .floating-ui-card > div {
+    gap: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.6rem;
+  }
+  .floating-ui-card > div > div:first-child {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+  }
+  .floating-ui-card > div > div:first-child svg {
+    width: 12px;
+    height: 12px;
+  }
+  .floating-ui-card > div > div:last-child div:first-child {
+    font-size: 0.6875rem;
+  }
+  .floating-ui-card > div > div:last-child div:last-child {
+    font-size: 0.5625rem;
   }
 }
 
@@ -284,9 +311,14 @@ button:focus-visible {
 
 /* ---------- Phone mockups ---------- */
 .phone-mockup {
-  width: 270px;
-  height: 560px;
+  width: 245px;
+  height: 510px;
   perspective: 1000px;
+}
+.phone-mockup img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .phone-frame {
   width: 100%;
@@ -505,11 +537,65 @@ button:focus-visible {
 .devices-showcase {
   position: relative;
 }
-.device-item {
-  transition: transform 0.4s var(--ease-out);
+
+/* ---------- Platform section: static device images ---------- */
+#platform .device-item img {
+  display: block;
+  border-radius: 18px;
+  box-shadow: 0 22px 55px rgba(21, 33, 90, 0.28);
 }
-.device-item:hover {
-  transform: translateY(-6px);
+#platform .phone-mockup-sm,
+#platform .phone-mockup-sm img {
+  width: 100%;
+  max-width: 140px;
+  height: auto;
+}
+#platform .tablet-mockup,
+#platform .tablet-mockup img {
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+}
+#platform .laptop-mockup,
+#platform .laptop-mockup img {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+}
+#platform .desktop-mockup {
+  width: 100%;
+  max-width: 350px;
+}
+#platform .desktop-screen-frame img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: none;
+}
+#platform .laptop-camera-dot,
+#platform .desktop-camera-dot {
+  display: none;
+}
+#platform .laptop-mockup .laptop-base {
+  display: none;
+}
+@media (max-width: 640px) {
+  #platform .phone-mockup-sm,
+  #platform .phone-mockup-sm img {
+    max-width: 128px;
+    height: auto;
+  }
+  #platform .tablet-mockup,
+  #platform .tablet-mockup img {
+    max-width: 210px;
+  }
+  #platform .laptop-mockup,
+  #platform .laptop-mockup img {
+    max-width: 290px;
+  }
+  #platform .desktop-mockup {
+    max-width: 300px;
+  }
 }
 
 /* ---------- Editorial cards ---------- */
