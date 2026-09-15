@@ -175,6 +175,12 @@
     modal.classList.add('modal-open');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    $('#modal-badge') && (() => {
+      const badge = $('#modal-badge');
+      badge.classList.remove('modal-badge-animate');
+      void badge.offsetWidth;
+      badge.classList.add('modal-badge-animate');
+    })();
     modalClose && modalClose.focus();
   };
 
