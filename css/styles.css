@@ -1136,13 +1136,14 @@ button:focus-visible {
 }
 .video-lightbox-video {
   position: relative;
-  width: 100%;
-  max-width: 420px;
-  max-height: 88vh;
+  width: auto;
+  max-width: 92vw;
+  max-height: 90vh;
+  height: auto;
   aspect-ratio: 9 / 16;
   object-fit: contain;
   background: #000;
-  border-radius: 14px;
+  border-radius: 16px;
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
   transform: scale(0.96);
   transition: transform 0.3s var(--ease-out);
@@ -1341,6 +1342,76 @@ button:focus-visible {
 }
 .vs-screen {
   position: relative;
+}
+
+.vs-screen video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.video-expand-trigger {
+  cursor: pointer;
+}
+
+.mobile-demo-player {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 30px 70px rgba(8, 12, 25, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mobile-demo-player .md-video {
+  border: 0;
+  border-radius: 18px;
+}
+
+.md-play-overlay {
+  border-radius: 18px;
+}
+
+.vs-play-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(8, 12, 25, 0.15), rgba(8, 12, 25, 0.45));
+  z-index: 2;
+  transition: background 0.3s var(--ease-out);
+}
+
+.video-expand-trigger:hover .vs-play-overlay {
+  background: linear-gradient(180deg, rgba(8, 12, 25, 0.05), rgba(8, 12, 25, 0.35));
+}
+
+.vs-play-btn {
+  width: 68px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 50%;
+  color: #fff;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 10px 30px rgba(8, 12, 25, 0.35);
+  transition: transform 0.3s var(--ease-out), background 0.3s var(--ease-out);
+}
+
+.video-expand-trigger:hover .vs-play-btn {
+  transform: scale(1.08);
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.vs-play-btn svg {
+  display: block;
+  margin-left: 3px;
+  filter: drop-shadow(0 2px 4px rgba(8, 12, 25, 0.4));
 }
 .vs-scanline {
   position: absolute;

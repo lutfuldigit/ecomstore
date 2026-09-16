@@ -463,17 +463,18 @@
     });
   })();
 
-  /* ---------- Video lightbox (mobile demo) ---------- */
+  /* ---------- Video lightbox (mobile demo / search video) ---------- */
   (function initVideoLightbox() {
     const lightbox = $('#video-lightbox');
     const lightboxVideo = lightbox ? lightbox.querySelector('.video-lightbox-video') : null;
     const lightboxClose = lightbox ? lightbox.querySelector('.video-lightbox-close') : null;
     const lightboxBackdrop = lightbox ? lightbox.querySelector('.video-lightbox-backdrop') : null;
-    const trigger = $('#video-expand-trigger');
+    const triggers = $$('.video-expand-trigger');
 
     /* Block download attempts: context menu and keyboard shortcuts */
     const blockDownload = (e) => e.preventDefault();
     lightbox && lightbox.addEventListener('contextmenu', blockDownload);
+
     document.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && ['s', 'u'].includes(e.key.toLowerCase())) {
         if (lightbox && lightbox.classList.contains('lightbox-open')) {
@@ -482,16 +483,26 @@
       }
     });
 
-    const openVideo = (currentTime) => {
+    const openVideo = (videoEl, currentTime) => {
       if (!lightbox || !lightboxVideo) return;
+
+      const srcEl = videoEl ? videoEl.querySelector('source') : null;
+      if (srcEl && srcEl.src) {
+        lightboxVideo.src = srcEl.src;
+      } else if (videoEl && videoEl.currentSrc) {
+        lightboxVideo.src = videoEl.currentSrc;
+      }
+
+      lightboxVideo.muted = false;
       lightboxVideo.currentTime = currentTime || 0;
+      lightbox.classList.add('lightbox-open');
+      lightbox.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+
       const playPromise = lightboxVideo.play();
       if (playPromise && typeof playPromise.catch === 'function') {
         playPromise.catch(() => {});
       }
-      lightbox.classList.add('lightbox-open');
-      lightbox.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
     };
 
     const closeVideo = () => {
@@ -502,13 +513,12 @@
       document.body.style.overflow = '';
     };
 
-    const inlineVideo = document.querySelector('#video-expand-trigger video');
-
-    if (trigger && lightbox) {
+    triggers.forEach((trigger) => {
+      const inlineVideo = trigger.querySelector('video');
       trigger.addEventListener('click', () => {
-        openVideo(inlineVideo ? inlineVideo.currentTime : 0);
+        openVideo(inlineVideo, inlineVideo ? inlineVideo.currentTime : 0);
       });
-    }
+    });
 
     lightboxClose && lightboxClose.addEventListener('click', closeVideo);
     lightboxBackdrop && lightboxBackdrop.addEventListener('click', closeVideo);
